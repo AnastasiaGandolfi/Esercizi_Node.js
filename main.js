@@ -1,3 +1,3 @@
-const printMessage = require("./printMessage.js");
+import printMessage from "./printMessage.js";
 
 printMessage("Hello World");
