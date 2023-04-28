@@ -1,16 +1,17 @@
 import express, { Request, Response } from "express";
-import Joi, { string } from "joi";
-import pgPromise from "pg-promise";
+import Joi from "joi";
+import pgPromise from "pg-promise"
 
-const { DATABASE_URL } = process.env
-const db = pgPromise({})(DATABASE_URL)
+const db = pgPromise({})("postgres://postgres:gonalia@localhost:5432/crypto")
+
 
 const setupDb = async () => {
     await db.none(`DROP TABLE IF EXISTS planets`)
     await db.none(`
     CREATE TABLE planets (
       id SERIAL NOT NULL PRIMARY KEY,
-      name TEXT NOT NULL
+      name TEXT NOT NULL,
+      image TEXT
     )
     `)
     await db.none(`INSERT INTO planets (name) VALUES ('Earth') `)
@@ -45,6 +46,18 @@ const create = async (req: Request, res: Response) => {
         res.status(201).json({ msg: `planet ${name} created` })
     }
 }
+const createImage = async (req: Request, res: Response) => {
+    const { file } = req
+    const { id } = req.params
+    if (!file?.filename) {
+        res.status(400).json({error: "upload file failed"});
+        return;
+    }
+    db.none("UPDATE planets SET image=$2 WHERE id=$1", [id, file.path])
+    res.status(201).json({msg: "image uploaded successfully"})
+    console.log(file?.path);
+}
+
 
 const updatedById = async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -72,5 +85,5 @@ const deleteByID = async (req: Request, res: Response) => {
 };
 
 export {
-    getAll, getOnById, create, updatedById, deleteByID
+    getAll, getOnById, create, createImage, updatedById, deleteByID
 }

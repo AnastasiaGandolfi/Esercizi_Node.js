@@ -1,23 +1,26 @@
 import express from "express";
 import * as dotenv from "dotenv";
-import { getAll, getOnById, create, updatedById, deleteByID } from './controllers/planets.js';
+import { getAll, getOnById, create, createImage, updatedById, deleteByID } from './controllers/planets.js';
+import morgan from "morgan";
+import multer from "multer";
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./uploads");
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({ storage });
 dotenv.config();
 const app = express();
 const { PORT } = process.env;
 app.use(express.json());
-let planets = [
-    {
-        id: 1,
-        name: "Mercury",
-    },
-    {
-        id: 2,
-        name: "Venus",
-    },
-];
+app.use(morgan('dev'));
 app.get('/api/planets', getAll);
 app.get('/api/planets/:id', getOnById);
 app.post('/api/planets/', create);
+app.post('/api/planets/:id/image', upload.single("image"), createImage);
 app.put('/api/planets/:id', updatedById);
 app.delete('/api/planets/:id', deleteByID);
 app.listen(PORT, () => {
