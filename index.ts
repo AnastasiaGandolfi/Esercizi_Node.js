@@ -2,13 +2,19 @@ import express, { Request, Response } from "express";
 import Joi from "joi";
 import * as dotenv from "dotenv";
 import { getAll, getOnById, create, updatedById, deleteByID } from './controllers/planets.js'
+import morgan from "morgan";
+import pgPromise from "pg-promise";
+
 
 dotenv.config()
 
 const app = express();
-const { PORT } = process.env;
+
+const { PORT } = process.env
 
 app.use(express.json())
+app.use(morgan('dev'))
+
 
 type Planet = {
   id: number,
