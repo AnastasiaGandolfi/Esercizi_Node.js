@@ -8,21 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import Joi from "joi";
-import pgPromise from "pg-promise";
-const db = pgPromise({})("postgres://postgres:gonalia@localhost:5432/crypto");
-const setupDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield db.none(`DROP TABLE IF EXISTS planets`);
-    yield db.none(`
-    CREATE TABLE planets (
-      id SERIAL NOT NULL PRIMARY KEY,
-      name TEXT NOT NULL,
-      image TEXT
-    )
-    `);
-    yield db.none(`INSERT INTO planets (name) VALUES ('Earth') `);
-    yield db.none(`INSERT INTO planets (name) VALUES ('Mars') `);
-});
-setupDb();
+import { db } from "./db.js";
 const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const planets = yield db.many("SELECT * FROM planets;");
     res.status(200).json(planets);
