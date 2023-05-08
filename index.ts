@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import Joi from "joi";
 import * as dotenv from "dotenv";
 import { getAll, getOnById, create, createImage, updatedById, deleteByID } from './controllers/planets.js'
+import {logIn, signUp} from "./controllers/users.js"
 import morgan from "morgan";
 import pgPromise from "pg-promise";
 import multer from "multer";
@@ -34,6 +35,10 @@ app.get('/api/planets/:id', getOnById);
 app.post('/api/planets/', create)
 
 app.post('/api/planets/:id/image', upload.single("image"), createImage)
+
+app.post("/api/users/login", logIn)
+
+app.post("/api/users/signup", signUp)
 
 app.put('/api/planets/:id', updatedById);
 
