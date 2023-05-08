@@ -2,10 +2,13 @@ import express, { Request, Response } from "express";
 import Joi from "joi";
 import * as dotenv from "dotenv";
 import { getAll, getOnById, create, createImage, updatedById, deleteByID } from './controllers/planets.js'
-import {logIn, signUp} from "./controllers/users.js"
+import {logIn, signUp, logOut} from "./controllers/users.js"
 import morgan from "morgan";
 import pgPromise from "pg-promise";
 import multer from "multer";
+
+import authorize from "./authorize.js";
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -39,6 +42,9 @@ app.post('/api/planets/:id/image', upload.single("image"), createImage)
 app.post("/api/users/login", logIn)
 
 app.post("/api/users/signup", signUp)
+
+app.get("/api/users/logout", authorize, logOut)
+
 
 app.put('/api/planets/:id', updatedById);
 
